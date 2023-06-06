@@ -3,6 +3,7 @@ from bokeh.layouts import column
 from bokeh.models import ColumnDataSource, Slider
 from bokeh.plotting import figure
 import numpy as np
+from bokeh.layouts import row
 
 # Function to calculate y values
 def calculate_y(n, T, w):
@@ -30,13 +31,14 @@ magnitude, phase = magnitude_phase(H)
 
 # ColumnDataSource to hold the values
 source1 = ColumnDataSource(data=dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)]))
-source2 = ColumnDataSource(data=dict(x=range(N), y=np.real(y)))
+source2 = ColumnDataSource(data=dict(x=np.arange(N), y=np.real(y)))
+
 
 # Create a new plot with a single line (the 'hand')
 p1 = figure(width=400, height=400, x_range=(-1, 1), y_range=(-1, 1), title='Magnitude and Phase')
 p1.line('x', 'y', line_width=2, source=source1)
 
-p2 = figure(width=400, height=400, title='y(n)')
+p2 = figure(width=1500, height=400, title='y(n)')
 p2.line('x', 'y', source=source2)
 
 # Slider to control the frequency
@@ -54,7 +56,8 @@ def update(attrname, old, new):
 
     # Update the y(n) plot
     y = calculate_y(N, T, w)
-    source2.data = dict(x=range(N), y=np.real(y))
+    source2.data = dict(x=np.arange(N), y=np.real(y))  # update this line
+
 
 
 frequency_slider.on_change('value', update)
@@ -65,4 +68,5 @@ samples_slider.on_change('value', update)
 layout1 = column(frequency_slider, p1)
 layout2 = column(samples_slider, p2)
 
-curdoc().add_root(layout1)
+layout = row(layout1, layout2)
+curdoc().add_root(layout)
