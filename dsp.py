@@ -8,16 +8,23 @@ import numpy as np
 def transfer_function(w):
     return 0.5 + 0.5 * np.exp(-1j * w)
 
+# Function to calculate magnitude and phase from a complex number
+def magnitude_phase(H):
+    magnitude = abs(H)
+    phase = np.angle(H)
+    return magnitude, phase
+
 # Initial value
 w = 0
 H = transfer_function(w)
+magnitude, phase = magnitude_phase(H)
 
 # ColumnDataSource to hold the values
-source = ColumnDataSource(data=dict(x=[H.real], y=[H.imag]))
+source = ColumnDataSource(data=dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)]))
 
-# Create a new plot with a single point (the 'hand')
+# Create a new plot with a single line (the 'hand')
 p = figure(width=400, height=400, x_range=(-1,1), y_range=(-1,1), title='Magnitude and Phase')
-p.circle('x', 'y', size=10, source=source)
+p.line('x', 'y', line_width=2, source=source)
 
 # Slider to control the frequency
 frequency = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
@@ -26,7 +33,8 @@ frequency = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
 def update(attrname, old, new):
     w = frequency.value
     H = transfer_function(w)
-    source.data = dict(x=[H.real], y=[H.imag])
+    magnitude, phase = magnitude_phase(H)
+    source.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
 frequency.on_change('value', update)
 
