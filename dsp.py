@@ -27,18 +27,18 @@ p = figure(width=400, height=400, x_range=(-1,1), y_range=(-1,1), title='Magnitu
 p.line('x', 'y', line_width=2, source=source)
 
 # Slider to control the frequency
-frequency = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
+frequency_slider = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
 
 # Update function to update the values when the slider changes
 def update(attrname, old, new):
-    w = frequency.value
+    w = frequency_slider.value
     H = transfer_function(w)
     magnitude, phase = magnitude_phase(H)
     source.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
-frequency.on_change('value', update)
+frequency_slider.on_change('value', update)
 
 # Arrange the plot and the slider in a column
-layout = column(frequency, p)
+layout = column(frequency_slider, p)
 
 curdoc().add_root(layout)
