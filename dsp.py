@@ -1,35 +1,36 @@
+from bokeh.io import curdoc
+from bokeh.layouts import column
+from bokeh.models import ColumnDataSource, Slider
+from bokeh.plotting import figure
 import numpy as np
-import matplotlib.pyplot as plt
 
-# Generate angles for the points on the circle
-angles = [0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi]
+# Function to calculate transfer function
+def transfer_function(w):
+    return 0.5 + 0.5 * np.exp(-1j * w)
 
-# Create the figure and axis
-fig, ax = plt.subplots()
+# Initial value
+w = 0
+H = transfer_function(w)
 
-# Draw the circle
-circle = plt.Circle((0, 0), radius=1, fill=False)
+# ColumnDataSource to hold the values
+source = ColumnDataSource(data=dict(x=[H.real], y=[H.imag]))
 
-# Add the circle to the plot
-ax.add_patch(circle)
+# Create a new plot with a single point (the 'hand')
+p = figure(width=400, height=400, x_range=(-1,1), y_range=(-1,1), title='Magnitude and Phase')
+p.circle('x', 'y', size=10, source=source)
 
-# Plot the points on the circle
-for angle in angles:
-    x = np.cos(angle)
-    y = np.sin(angle)
-    plt.plot(x, y, 'ro')
+# Slider to control the frequency
+frequency = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
 
-# Set the aspect ratio to equal
-ax.set_aspect('equal')
+# Update function to update the values when the slider changes
+def update(attrname, old, new):
+    w = frequency.value
+    H = transfer_function(w)
+    source.data = dict(x=[H.real], y=[H.imag])
 
-# Set the plot limits
-plt.xlim(-1.5, 1.5)
-plt.ylim(-1.5, 1.5)
+frequency.on_change('value', update)
 
-# Add labels to the points
-labels = ['0', 'π/4', 'π/2', '3π/4', 'π']
-for i, txt in enumerate(labels):
-    plt.annotate(txt, (np.cos(angles[i]), np.sin(angles[i])))
+# Arrange the plot and the slider in a column
+layout = column(frequency, p)
 
-# Show the plot
-plt.show()
+curdoc().add_root(layout)
