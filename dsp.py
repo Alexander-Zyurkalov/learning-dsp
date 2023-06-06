@@ -22,7 +22,7 @@ def magnitude_phase(H):
 # Initial value
 N = 10
 T = 1.0
-w = 2 * np.pi * 1  # frequency is 1 Hz
+w = 0
 H = transfer_function(w)
 y = calculate_y(N, T, w)
 
@@ -44,11 +44,17 @@ p2.line('x', 'y', source=source2)
 # Slider to control the frequency
 frequency_slider = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
 samples_slider = Slider(start=10, end=1000, value=N, step=10, title="N")
+# Slider to control the sampling frequency
+sampling_frequency_slider = Slider(start=1, end=100, value=10, step=1, title="fs")
+
 
 # Update function to update the values when the slider changes
 def update(attrname, old, new):
     w = frequency_slider.value
     N = samples_slider.value
+    fs = sampling_frequency_slider.value  # Get the value of fs from the slider
+
+    T = 1.0 / fs  # Modify T based on the new fs
 
     H = transfer_function(w)
     magnitude, phase = magnitude_phase(H)
@@ -56,17 +62,17 @@ def update(attrname, old, new):
 
     # Update the y(n) plot
     y = calculate_y(N, T, w)
-    source2.data = dict(x=np.arange(N), y=np.real(y))  # update this line
-
-
+    source2.data = dict(x=np.arange(N), y=np.real(y))
 
 frequency_slider.on_change('value', update)
 samples_slider.on_change('value', update)
+sampling_frequency_slider.on_change('value', update)  # Add this line to update fs when the slider changes
 
 
 # Arrange the plot and the slider in a column
 layout1 = column(frequency_slider, p1)
-layout2 = column(samples_slider, p2)
+layout2 = column(samples_slider, sampling_frequency_slider, p2)
+# Add the new slider to your layout
 
 layout = row(layout1, layout2)
 curdoc().add_root(layout)
