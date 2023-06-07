@@ -6,11 +6,13 @@ import numpy as np
 from bokeh.layouts import row
 
 # Function to calculate y values
-def calculate_y(n, T, w):
+def calculate_y(n, T, f):
+    w = 2 * np.pi * f
     return np.exp(1j * w * np.arange(n) * T)
 
 # Function to calculate transfer function
-def transfer_function(w):
+def transfer_function(f):
+    w = 2 * np.pi * f
     return 0.5 + 0.5 * np.exp(-1j * w)
 
 # Function to calculate magnitude and phase from a complex number
@@ -22,9 +24,9 @@ def magnitude_phase(H):
 # Initial value
 N = 10
 T = 1.0
-w = 0
-H = transfer_function(w)
-y = calculate_y(N, T, w)
+f = 0
+H = transfer_function(f)
+y = calculate_y(N, T, f)
 
 s = 0.5  # initial value for s
 
@@ -46,7 +48,7 @@ p3 = figure(width=1500, height=400, title='y(n) for s seconds')
 p3.line('x', 'y', source=source3)
 
 # Slider to control the frequency
-frequency_slider = Slider(start=-np.pi, end=np.pi, value=w, step=0.001, title="w")
+frequency_slider = Slider(start=-100, end=100, value=f, step=0.1, title="f")  # Slider now represents frequency in Hz
 samples_slider = Slider(start=1, end=100, value=N, step=1, title="N")
 # Slider to control the sampling frequency
 sampling_frequency_slider = Slider(start=1, end=100, value=10, step=1, title="fs")
@@ -55,23 +57,23 @@ time_slider = Slider(start=0.5, end=20, value=s, step=0.1, title="s")
 
 # Update function to update the values when the slider changes
 def update(attrname, old, new):
-    w = frequency_slider.value
+    f = frequency_slider.value
     N = samples_slider.value
     fs = sampling_frequency_slider.value  # Get the value of fs from the slider
     s = time_slider.value  # Get the value of s from the slider
 
     T = 1.0 / fs  # Modify T based on the new fs
 
-    H = transfer_function(w)
+    H = transfer_function(f)
     magnitude, phase = magnitude_phase(H)
     source1.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
     # Update the y(n) plot
-    y = calculate_y(N, T, w)
+    y = calculate_y(N, T, f)
     source2.data = dict(x=np.arange(N), y=np.real(y))
 
     # Update the y(n) for s seconds plot
-    y3 = calculate_y(int(s / T), T, w)
+    y3 = calculate_y(int(s / T), T, f)
     source3.data = dict(x=np.arange(int(s / T)), y=np.real(y3))
 
 frequency_slider.on_change('value', update)
