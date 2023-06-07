@@ -42,8 +42,8 @@ p2 = figure(width=1500, height=400, title='y(n)')
 p2.line('x', 'y', source=source2)
 
 # Slider to control the frequency
-frequency_slider = Slider(start=-np.pi, end=np.pi, value=w, step=0.01, title="w")
-samples_slider = Slider(start=10, end=1000, value=N, step=10, title="N")
+frequency_slider = Slider(start=-np.pi, end=np.pi, value=w, step=0.001, title="w")
+samples_slider = Slider(start=1, end=100, value=N, step=1, title="N")
 # Slider to control the sampling frequency
 sampling_frequency_slider = Slider(start=1, end=100, value=10, step=1, title="fs")
 
