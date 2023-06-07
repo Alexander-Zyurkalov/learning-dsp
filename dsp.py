@@ -1,9 +1,8 @@
 from bokeh.io import curdoc
-from bokeh.layouts import column
+from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider
 from bokeh.plotting import figure
 import numpy as np
-from bokeh.layouts import row
 
 # Function to calculate y values
 def calculate_y(n, T, f):
@@ -48,7 +47,7 @@ p3 = figure(width=1500, height=400, title='y(n) for s seconds')
 p3.line('x', 'y', source=source3)
 
 # Slider to control the frequency
-frequency_slider = Slider(start=-100, end=100, value=f, step=0.1, title="f")  # Slider now represents frequency in Hz
+frequency_slider = Slider(start=-20, end=20, value=f, step=0.001, title="f", width=1500)  # Slider now represents frequency in Hz
 samples_slider = Slider(start=1, end=100, value=N, step=1, title="N")
 # Slider to control the sampling frequency
 sampling_frequency_slider = Slider(start=1, end=100, value=10, step=1, title="fs")
@@ -82,8 +81,9 @@ sampling_frequency_slider.on_change('value', update)  # Add this line to update 
 time_slider.on_change('value', update)  # Add this line to update s when the slider changes
 
 # Arrange the plot and the slider in a column
-layout1 = column(frequency_slider, p1)
+layout1 = column(p1)
 layout2 = column(samples_slider, sampling_frequency_slider, time_slider, p2, p3)
 
 layout = row(layout1, layout2)
+curdoc().add_root(frequency_slider)
 curdoc().add_root(layout)
