@@ -27,7 +27,7 @@ class Data:
         self.magnitude_and_phase.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
         # Update the y(n) plot
-        self.original_signal.data = dict(x=np.arange(self.N), y=np.real(y))
+        self.original_signal.data = dict(x=np.arange(self.N), y=np.imag(y))
 
     # Function to calculate y values
     def calculate_y(self, n, T, f):

@@ -1,8 +1,6 @@
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
-from bokeh.models import ColumnDataSource, Slider
 from bokeh.plotting import figure
-import numpy as np
 
 from data import Data
 from sliders import FrequencySlider, SamplesSlider, SamplingFrequencySlider, TimeSlider
