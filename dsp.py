@@ -11,10 +11,13 @@ data = Data()
 
 # Create a new plot with a single line (the 'hand')
 p1 = figure(width=400, height=400, x_range=(-1, 1), y_range=(-1, 1), title='Magnitude and Phase')
-p1.line('x', 'y', line_width=2, source=data.source1)
+p1.line('x', 'y', line_width=2, source=data.magnitude_and_phase)
 
+# Assuming you have two data sources: source2 and source3
 p2 = figure(width=1500, height=400, title='y(n)')
-p2.line('x', 'y', source=data.source2)
+p2.line('x', 'y', source=data.original_signal, color='blue', legend_label="Signal 1")
+p2.line('x', 'y', source=data.delayed_signal, color='red', legend_label="Signal 2")
+
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-20, end=20, value=data.f, step=0.001, title="f")

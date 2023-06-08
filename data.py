@@ -11,9 +11,9 @@ class Data:
         self.s = self.N * self.T
 
         # ColumnDataSource to hold the values
-        self.source1 = ColumnDataSource(data=dict(x=[], y=[]))
-        self.source2 = ColumnDataSource(data=dict(x=[], y=[]))
-        self.source3 = ColumnDataSource(data=dict(x=[], y=[]))
+        self.magnitude_and_phase = ColumnDataSource(data=dict(x=[], y=[]))
+        self.original_signal = ColumnDataSource(data=dict(x=[], y=[]))
+        self.delayed_signal = ColumnDataSource(data=dict(x=[], y=[]))
 
         self.update_data()
 
@@ -24,10 +24,10 @@ class Data:
         # Function to calculate transfer function
         H = self.transfer_function(self.f)
         magnitude, phase = self.magnitude_phase(H)
-        self.source1.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
+        self.magnitude_and_phase.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
         # Update the y(n) plot
-        self.source2.data = dict(x=np.arange(self.N), y=np.real(y))
+        self.original_signal.data = dict(x=np.arange(self.N), y=np.real(y))
 
     # Function to calculate y values
     def calculate_y(self, n, T, f):
