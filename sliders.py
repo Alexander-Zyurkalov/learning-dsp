@@ -61,14 +61,14 @@ class TimeSlider(ParameterSlider):
 # Sampling frequency class
 class SamplingFrequencySlider(ParameterSlider):
 
-    def __init__(self, data, start, end, value, step, title, time_slider: TimeSlider):
+    def __init__(self, data, start, end, value, step, title, samples_slider: SamplesSlider):
         super().__init__(data, start, end, value, step, title)
-        self.time_slider = time_slider
+        self.samples_slider = samples_slider
 
     def update(self, attrname, old, new):
         self.data.fs = self.slider.value
         self.data.T = 1.0 / self.data.fs  # Modify T based on the new fs
-        self.data.s = self.data.N * self.data.T  # Modify s based on the new T
+        self.data.N = int(self.data.s / self.data.T)  # Modify N based on the new T
         self.data.update_data()
-        if self.time_slider is not None:
-            self.time_slider.slider.value = self.data.s
+        if self.samples_slider is not None:
+            self.samples_slider.slider.value = self.data.N

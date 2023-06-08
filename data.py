@@ -1,4 +1,4 @@
-from bokeh.models import ColumnDataSource, Slider
+from bokeh.models import ColumnDataSource
 import numpy as np
 
 
