@@ -4,11 +4,11 @@ import numpy as np
 
 class Data:
     def __init__(self):
-        self.f = 0
+        self.f = 1
         self.N = 10
         self.fs = 10
-        self.s = 0.5
-        self.T = 1.0
+        self.T = 1.0 / self.fs
+        self.s = self.N * self.T
 
         # ColumnDataSource to hold the values
         self.source1 = ColumnDataSource(data=dict(x=[], y=[]))
@@ -29,9 +29,6 @@ class Data:
         # Update the y(n) plot
         self.source2.data = dict(x=np.arange(self.N), y=np.real(y))
 
-        # Update the y(n) for s seconds plot
-        y3 = self.calculate_y(int(self.s / self.T), self.T, self.f)
-        self.source3.data = dict(x=np.arange(int(self.s / self.T)), y=np.real(y3))
 
     # Function to calculate y values
     def calculate_y(self, n, T, f):

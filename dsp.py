@@ -18,8 +18,6 @@ p1.line('x', 'y', line_width=2, source=data.source1)
 p2 = figure(width=1500, height=400, title='y(n)')
 p2.line('x', 'y', source=data.source2)
 
-p3 = figure(width=1500, height=400, title='y(n) for s seconds')
-p3.line('x', 'y', source=data.source3)
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-20, end=20, value=data.f, step=0.001, title="f")
@@ -29,7 +27,9 @@ time_slider = TimeSlider(data, start=0.5, end=20, value=data.s, step=0.1, title=
 
 # Arrange the plot and the slider in a column
 layout1 = column(p1)
-layout2 = column(samples_slider.slider, sampling_frequency_slider.slider, time_slider.slider, p2, p3)
+layout2 = column(samples_slider.slider, sampling_frequency_slider.slider, time_slider.slider, p2)
+
+data.update_data()
 
 layout = row(layout1, layout2)
 curdoc().add_root(frequency_slider.slider)
