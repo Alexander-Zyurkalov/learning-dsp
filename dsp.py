@@ -7,8 +7,6 @@ import numpy as np
 from data import Data
 from sliders import FrequencySlider, SamplesSlider, SamplingFrequencySlider, TimeSlider
 
-
-
 data = Data()
 
 # Create a new plot with a single line (the 'hand')
@@ -17,7 +15,6 @@ p1.line('x', 'y', line_width=2, source=data.source1)
 
 p2 = figure(width=1500, height=400, title='y(n)')
 p2.line('x', 'y', source=data.source2)
-
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-20, end=20, value=data.f, step=0.001, title="f")
