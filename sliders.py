@@ -41,7 +41,12 @@ class SamplingFrequencySlider(ParameterSlider):
 
 # Time class
 class TimeSlider(ParameterSlider):
+    def __init__(self, data, start, end, value, step, title, samples_slider: SamplesSlider):
+        super().__init__(data, start, end, value, step, title)
+        self.samples_slider = samples_slider
+
     def update(self, attrname, old, new):
         self.data.s = self.slider.value
         self.data.N = int(self.data.s / self.data.T)  # Modify N based on the new s
+        self.samples_slider.slider.value = self.data.N
         self.data.update_data()
