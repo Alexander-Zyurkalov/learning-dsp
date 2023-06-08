@@ -18,6 +18,10 @@ class ParameterSlider(ABC):
 
 # Frequency class
 class FrequencySlider(ParameterSlider):
+    def __init__(self, data, start, end, value, step, title):
+        super().__init__(data, start, end, value, step, title)
+        self.slider.width = 1800
+
     def update(self, attrname, old, new):
         self.data.f = self.slider.value
         self.data.update_data()
@@ -68,4 +72,3 @@ class SamplingFrequencySlider(ParameterSlider):
         self.data.update_data()
         if self.time_slider is not None:
             self.time_slider.slider.value = self.data.s
-
