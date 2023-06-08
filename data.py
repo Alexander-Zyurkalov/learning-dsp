@@ -29,7 +29,6 @@ class Data:
         # Update the y(n) plot
         self.source2.data = dict(x=np.arange(self.N), y=np.real(y))
 
-
     # Function to calculate y values
     def calculate_y(self, n, T, f):
         w = 2 * np.pi * f

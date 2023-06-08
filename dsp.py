@@ -24,6 +24,7 @@ frequency_slider = FrequencySlider(data, start=-20, end=20, value=data.f, step=0
 samples_slider = SamplesSlider(data, start=1, end=100, value=data.N, step=1, title="N")
 sampling_frequency_slider = SamplingFrequencySlider(data, start=1, end=100, value=data.fs, step=1, title="fs")
 time_slider = TimeSlider(data, start=0.5, end=20, value=data.s, step=0.1, title="s", samples_slider=samples_slider)
+samples_slider.add_time_slider(time_slider)
 
 # Arrange the plot and the slider in a column
 layout1 = column(p1)
