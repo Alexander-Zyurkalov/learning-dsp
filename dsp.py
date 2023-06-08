@@ -3,6 +3,7 @@ from bokeh.layouts import column, row
 from bokeh.models import ColumnDataSource, Slider
 from bokeh.plotting import figure
 import numpy as np
+from sliders import FrequencySlider, SamplesSlider, SamplingFrequencySlider, TimeSlider
 
 # Function to calculate y values
 def calculate_y(n, T, f):
