@@ -16,6 +16,7 @@ class Data:
         self.delayed_signal = ColumnDataSource(data=dict(x=[], y=[]))
         self.complex_original_signal = ColumnDataSource(data=dict(x=[], y=[]))
 
+
         self.update_data()
 
     def update_data(self):
@@ -33,6 +34,11 @@ class Data:
         # Update the complex y(n) plot
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))
 
+        # Update the delayed y(n) plot
+        delayed_y = self.delayed_y(self.N, self.T, self.f)
+        self.delayed_signal.data = dict(x=np.arange(self.N), y=np.real(delayed_y))
+
+
     # Function to calculate y values
     def calculate_y(self, n, T, f):
         if -0.01 < f < 0.01:
@@ -43,6 +49,11 @@ class Data:
         # else:
         w = 2 * np.pi * f
         return np.exp(1j * w * np.arange(n) * T)
+
+    def delayed_y(self, n, T, f):
+        w = 2 * np.pi * f
+        calculate_y = self.calculate_y(n, self.T, self.f)
+        return 0.5 * calculate_y + 0.5 * calculate_y * np.exp(-1j*w)
 
     # Function to calculate transfer function
     def transfer_function(self, f):
