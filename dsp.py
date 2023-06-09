@@ -11,6 +11,9 @@ data = Data()
 p1 = figure(width=400, height=400, x_range=(-1, 1), y_range=(-1, 1), title='Magnitude and Phase')
 p1.line('x', 'y', line_width=2, source=data.magnitude_and_phase)
 
+p3 = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2), title='Complex y(n)')
+p3.line('x', 'y', line_width=2, source=data.complex_original_signal)
+
 # Assuming you have two data sources: source2 and source3
 p2 = figure(width=1500, height=400, title='y(n)', y_range=(-1.2, 1.2), x_range=(0, data.N))
 p2.line('x', 'y', source=data.original_signal, color='blue', legend_label="Signal 1")
@@ -26,7 +29,7 @@ sampling_frequency_slider = SamplingFrequencySlider(data, start=1, end=100, valu
                                                     samples_slider=samples_slider)
 
 # Arrange the plot and the slider in a column
-layout1 = column(p1)
+layout1 = column(p1, p3)
 layout2 = column(samples_slider.slider, sampling_frequency_slider.slider, time_slider.slider, p2)
 
 data.update_data()

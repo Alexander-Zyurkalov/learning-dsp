@@ -14,6 +14,7 @@ class Data:
         self.magnitude_and_phase = ColumnDataSource(data=dict(x=[], y=[]))
         self.original_signal = ColumnDataSource(data=dict(x=[], y=[]))
         self.delayed_signal = ColumnDataSource(data=dict(x=[], y=[]))
+        self.complex_original_signal = ColumnDataSource(data=dict(x=[], y=[]))
 
         self.update_data()
 
@@ -28,6 +29,9 @@ class Data:
 
         # Update the y(n) plot
         self.original_signal.data = dict(x=np.arange(self.N), y=np.real(y))
+
+        # Update the complex y(n) plot
+        self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))
 
     # Function to calculate y values
     def calculate_y(self, n, T, f):
