@@ -31,8 +31,13 @@ class Data:
 
     # Function to calculate y values
     def calculate_y(self, n, T, f):
-        w = 2 * np.pi * f
-        return np.exp(1j * w * np.arange(n) * T)
+        if -0.01 < f < 0.01:
+            ones = np.ones(n)
+            ones[0] = 0
+            return ones * 1j
+        else:
+            w = 2 * np.pi * f
+            return np.exp(1j * w * np.arange(n) * T)
 
     # Function to calculate transfer function
     def transfer_function(self, f):
