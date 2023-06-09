@@ -27,17 +27,18 @@ class Data:
         self.magnitude_and_phase.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
         # Update the y(n) plot
-        self.original_signal.data = dict(x=np.arange(self.N), y=np.imag(y))
+        self.original_signal.data = dict(x=np.arange(self.N), y=np.real(y))
 
     # Function to calculate y values
     def calculate_y(self, n, T, f):
         if -0.01 < f < 0.01:
-            ones = np.ones(n)
-            ones[0] = 0
-            return ones * 1j
-        else:
-            w = 2 * np.pi * f
-            return np.exp(1j * w * np.arange(n) * T)
+            f = 0
+            # ones = np.ones(n)
+            # ones[0] = 0
+            # return ones * 1j
+        # else:
+        w = 2 * np.pi * f
+        return np.exp(1j * w * np.arange(n) * T)
 
     # Function to calculate transfer function
     def transfer_function(self, f):
