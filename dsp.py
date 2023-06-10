@@ -16,8 +16,8 @@ p3.line('x', 'y', line_width=2, source=data.complex_original_signal)
 
 # Assuming you have two data sources: source2 and source3
 p2 = figure(width=1500, height=400, title='y(n)', y_range=(-1.2, 1.2))
-p2.line('x', 'y', source=data.original_signal, color='blue', legend_label="Signal 1")
-p2.line('x', 'y', source=data.delayed_signal, color='red', legend_label="Signal 2")
+p2.line('x', 'y', source=data.original_signal, color='blue', legend_label="Real part of the signal")
+p2.line('x', 'y', source=data.delayed_signal, color='red', legend_label="Delayed real part of the signal")
 
 
 # Create sliders
