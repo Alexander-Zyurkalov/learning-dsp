@@ -20,7 +20,8 @@ p2.line('x', 'y', source=data.original_signal, color='blue', legend_label="Real 
 p2.line('x', 'y', source=data.delayed_signal, color='red', legend_label="Delayed real part of the signal")
 
 p4 = figure(width=1500, height=400, title='sine(wnT)', y_range=(-1.2, 1.2))
-p4.line('x', 'y', source=data.sine_original, color='blue')
+p4.line('x', 'y', source=data.sine_original, color='blue', legend_label="Original sine wave")
+p4.line('x', 'y', source=data.sine_original_delayed, color='red', legend_label="Delayed sine wave")
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-5, end=20, value=data.f, step=0.005, title="f")

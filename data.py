@@ -14,6 +14,16 @@ def calculate_y_sine(n, T, f):
     w = 2 * np.pi * f
     return np.sin(w * np.arange(n) * T)
 
+
+def delayed_y_for_sine(n, T, f):
+    w = 2 * np.pi * f
+    calculate_y = calculate_y_sine(n, T, f)
+    delayed_y = np.zeros(n)
+    for i in range(1, n):
+        delayed_y[i] = 0.5 * calculate_y[i] + 0.5 * calculate_y[i - 1]
+    return delayed_y
+
+
 def transfer_function(f):
     w = 2 * np.pi * f
     return 0.5 + 0.5 * np.exp(-1j * w)
@@ -45,6 +55,7 @@ class Data:
         self.delayed_signal = ColumnDataSource(data=dict(x=[], y=[]))
         self.complex_original_signal = ColumnDataSource(data=dict(x=[], y=[]))
         self.sine_original = ColumnDataSource(data=dict(x=[], y=[]))
+        self.sine_original_delayed = ColumnDataSource(data=dict(x=[], y=[]))
 
         self.update_data()
 
@@ -70,3 +81,7 @@ class Data:
         # Update the sine plot
         sine_y = calculate_y_sine(self.N, self.T, self.f)
         self.sine_original.data = dict(x=np.arange(self.N), y=sine_y)
+
+        # Update the delayed sine plot
+        delayed_sine_y = delayed_y_for_sine(self.N, self.T, self.f)
+        self.sine_original_delayed.data = dict(x=np.arange(self.N), y=delayed_sine_y)
