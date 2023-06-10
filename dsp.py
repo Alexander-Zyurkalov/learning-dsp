@@ -1,4 +1,5 @@
 from bokeh.io import curdoc
+from bokeh.models import Select
 from bokeh.layouts import column, row
 from bokeh.plotting import figure
 
@@ -31,6 +32,26 @@ samples_slider.add_time_slider(time_slider)
 sampling_frequency_slider = SamplingFrequencySlider(data, start=1, end=100, value=data.fs, step=1, title="fs",
                                                     samples_slider=samples_slider)
 
+
+def update_f(attrname, old, new):
+    f = 0
+    if new == "DC":
+        f = 0
+    elif new == "1/4 Nyquist":
+        f = data.fs / 8
+    elif new == "1/2 Nyquist":
+        f = data.fs / 4
+    elif new == "Nyquist":
+        f = data.fs / 2
+    elif new == "2 Nyquist":
+        f = data.fs
+    if new != "":
+        frequency_slider.slider.value = f
+
+
+select = Select(title="Option:", value="Nyquist", options=["", "DC", "1/4 Nyquist", "1/2 Nyquist", "Nyquist", "2 Nyquist"])
+select.on_change('value', update_f)
+
 # Arrange the plot and the slider in a column
 layout1 = column(p1, p3)
 layout2 = column(
@@ -40,5 +61,6 @@ layout2 = column(
 data.update_data()
 
 layout = row(layout1, layout2)
+curdoc().add_root(select)
 curdoc().add_root(frequency_slider.slider)
 curdoc().add_root(layout)
