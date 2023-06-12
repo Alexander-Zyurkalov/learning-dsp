@@ -32,7 +32,8 @@ samples_slider.add_time_slider(time_slider)
 sampling_frequency_slider = SamplingFrequencySlider(data, start=1, end=100, value=data.fs, step=1, title="fs",
                                                     samples_slider=samples_slider)
 select_nyquist = ParameterSelectNyquist(data, frequency_slider)
-
+sampling_frequency_slider.add_select(select_nyquist)
+frequency_slider.add_select(select_nyquist)
 
 # Arrange the plot and the slider in a column
 layout1 = column(p1, p3)

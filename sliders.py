@@ -24,10 +24,16 @@ class FrequencySlider(ParameterSlider):
     def __init__(self, data: Data, start: float, end: float, value: float, step: float, title: str):
         super().__init__(data, start, end, value, step, title)
         self.slider.width = 1800
+        self.select = None
+
+    def add_select(self, select: ParameterSelectNyquist) -> None:
+        self.select = select
 
     def update(self, attrname: str, old: float, new: float) -> None:
         self.data.f = self.slider.value
         self.data.update_data()
+        if self.select is not None:
+            self.select.update_by_slider()
 
 
 # Samples class
@@ -68,7 +74,11 @@ class SamplingFrequencySlider(ParameterSlider):
     def __init__(self, data: Data, start: float, end: float, value: float, step: float, title: str,
                  samples_slider: SamplesSlider):
         super().__init__(data, start, end, value, step, title)
+        self.select = None
         self.samples_slider = samples_slider
+
+    def add_select(self, select: ParameterSelectNyquist) -> None:
+        self.select = select
 
     def update(self, attrname: str, old: float, new: float) -> None:
         self.data.fs = self.slider.value
@@ -77,16 +87,36 @@ class SamplingFrequencySlider(ParameterSlider):
         self.data.update_data()
         if self.samples_slider is not None:
             self.samples_slider.slider.value = self.data.N
+        if self.select is not None:
+            self.select.update_by_slider()
 
 
 class ParameterSelectNyquist:
     def __init__(self, data: Data, frequency_slider: FrequencySlider):
         self.frequency_slider = frequency_slider
         self.data = data
-        self.select = Select(title="Option:", value="", options=["", "DC", "1/4 Nyquist", "1/2 Nyquist", "Nyquist", "2 Nyquist"])
+        self.select = Select(title="Option:", value="",
+                             options=["", "DC", "1/4 Nyquist", "1/2 Nyquist", "Nyquist", "2 Nyquist"])
         self.select.on_change('value', self.update)
 
+    def update_by_slider(self) -> None:
+        f = self.data.f
+        if f == 0:
+            self.select.value = "DC"
+        elif f == self.data.fs / 8:
+            self.select.value = "1/4 Nyquist"
+        elif f == self.data.fs / 4:
+            self.select.value = "1/2 Nyquist"
+        elif f == self.data.fs / 2:
+            self.select.value = "Nyquist"
+        elif f == self.data.fs:
+            self.select.value = "2 Nyquist"
+        else:
+            self.select.value = ""
+
     def update(self, attrname: str, old: float, new: float) -> None:
+        if old == new:
+            return
         f = 0
         if new == "DC":
             f = 0
