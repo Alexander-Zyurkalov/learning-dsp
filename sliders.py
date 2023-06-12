@@ -2,7 +2,8 @@ from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import Optional
 
-from bokeh.models import Slider
+from bokeh.models import FuncTickFormatter, Select
+from bokeh.models import Slider, CustomJS
 from data import Data
 
 
@@ -76,3 +77,26 @@ class SamplingFrequencySlider(ParameterSlider):
         self.data.update_data()
         if self.samples_slider is not None:
             self.samples_slider.slider.value = self.data.N
+
+
+class ParameterSelectNyquist:
+    def __init__(self, data: Data, frequency_slider: FrequencySlider):
+        self.frequency_slider = frequency_slider
+        self.data = data
+        self.select = Select(title="Option:", value="", options=["", "DC", "1/4 Nyquist", "1/2 Nyquist", "Nyquist", "2 Nyquist"])
+        self.select.on_change('value', self.update)
+
+    def update(self, attrname: str, old: float, new: float) -> None:
+        f = 0
+        if new == "DC":
+            f = 0
+        elif new == "1/4 Nyquist":
+            f = self.data.fs / 8
+        elif new == "1/2 Nyquist":
+            f = self.data.fs / 4
+        elif new == "Nyquist":
+            f = self.data.fs / 2
+        elif new == "2 Nyquist":
+            f = self.data.fs
+        if new != "" and self.frequency_slider is not None:
+            self.frequency_slider.slider.value = f
