@@ -11,6 +11,8 @@ def calculate_y_for_ewint(n, T, f):
 
 
 def calculate_y_sine(n, T, f):
+    if n < 0:
+        return 0
     w = 2 * np.pi * f
     return np.sin(w * np.arange(n) * T)
 
@@ -19,7 +21,7 @@ def delayed_y_for_sine(n, T, f):
     w = 2 * np.pi * f
     calculate_y = calculate_y_sine(n, T, f)
     delayed_y = np.zeros(n)
-    for i in range(1, n):
+    for i in range(0, n):
         delayed_y[i] = 0.5 * calculate_y[i] + 0.5 * calculate_y[i - 1]
     return delayed_y
 
