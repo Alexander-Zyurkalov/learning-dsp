@@ -81,6 +81,11 @@ class Data:
                 'sine_delayed': ColumnDataSource(data=dict(x=[], y=[])),
                 'sine_mixed_with_delayed': ColumnDataSource(data=dict(x=[], y=[])),
             },
+            'Impulse': {
+                'impulse_original': ColumnDataSource(data=dict(x=[], y=[])),
+                'impulse_delayed': ColumnDataSource(data=dict(x=[], y=[])),
+                'impulse_mixed_with_delayed': ColumnDataSource(data=dict(x=[], y=[])),
+            },
         }
 
         self.update_data()
@@ -105,6 +110,21 @@ class Data:
         sine_mixed_with_delayed = mix_with_delayed_sine(self.N, self.T, self.f)
         self.signal_groups['Sine']['sine_original'].data = dict(x=np.arange(self.N), y=sine_y)
         self.signal_groups['Sine']['sine_delayed'].data = dict(x=np.arange(self.N),
-                                                               y=calculated_y_one_sample_delayed(self.N, self.T, self.f))
+                                                               y=calculated_y_one_sample_delayed(self.N, self.T,
+                                                                                                 self.f))
         self.signal_groups['Sine']['sine_mixed_with_delayed'].data = dict(x=np.arange(self.N),
                                                                           y=sine_mixed_with_delayed)
+
+        impulse_y = np.zeros(self.N)
+        impulse_y[5] = 1
+
+        delayed_impulse = np.zeros(self.N)
+        delayed_impulse[6] = impulse_y[5]
+
+        impulse_mixed_with_delayed = 0.5 * impulse_y + 0.5 * delayed_impulse
+
+        self.signal_groups['Impulse']['impulse_original'].data = dict(x=np.arange(self.N), y=impulse_y)
+        self.signal_groups['Impulse']['impulse_delayed'].data = dict(x=np.arange(self.N),
+                                                                     y=delayed_impulse)
+        self.signal_groups['Impulse']['impulse_mixed_with_delayed'].data = dict(x=np.arange(self.N),
+                                                                                y=impulse_mixed_with_delayed)
