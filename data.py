@@ -72,8 +72,9 @@ class Data:
 
         self.signal_groups = {
             'e^{jnT}': {
-                'original_signal': ColumnDataSource(data=dict(x=[], y=[])),
-                'delayed_signal': ColumnDataSource(data=dict(x=[], y=[])),
+                'real_signal': ColumnDataSource(data=dict(x=[], y=[])),
+                'imag_signal': ColumnDataSource(data=dict(x=[], y=[])),
+                'delayed_real_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 '0.5*original+0.5*delayed': ColumnDataSource(data=dict(x=[], y=[])),
             },
             'Sine': {
@@ -100,8 +101,9 @@ class Data:
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))
 
         mix_with_delayed = mixture_with_delayed_e_jnt(self.N, self.T, self.f)
-        self.signal_groups['e^{jnT}']['original_signal'].data = dict(x=np.arange(self.N), y=np.real(y))
-        self.signal_groups['e^{jnT}']['delayed_signal'].data = dict(x=np.arange(self.N),
+        self.signal_groups['e^{jnT}']['real_signal'].data = dict(x=np.arange(self.N), y=np.real(y))
+        self.signal_groups['e^{jnT}']['imag_signal'].data = dict(x=np.arange(self.N), y=np.imag(y))
+        self.signal_groups['e^{jnT}']['delayed_real_signal'].data = dict(x=np.arange(self.N),
                                                                     y=np.real(delayed_ejnt(self.N, self.T, self.f)))
         self.signal_groups['e^{jnT}']['0.5*original+0.5*delayed'].data = dict(x=np.arange(self.N),
                                                                               y=np.real(mix_with_delayed))
