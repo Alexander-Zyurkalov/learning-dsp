@@ -14,14 +14,18 @@ p1.line('x', 'y', line_width=2, source=data.magnitude_and_phase)
 p3 = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2), title='Complex y(n)')
 p3.line('x', 'y', line_width=2, source=data.complex_original_signal)
 
+colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
+
 # Create the figures in a loop
 figure_list = []
 for group_name, signals in data.signal_groups.items():
     p = figure(width=1500, height=400, title=group_name, y_range=(-1.2, 1.2))
-    for signal_name, source in signals.items():
-        color = 'blue' if 'original' in signal_name else 'red'
+    for index, (signal_name, source) in enumerate(signals.items()):
+        # Pick a color from the list, cycling back to the start if there are more signals than colors
+        color = colors[index % len(colors)]
         p.line('x', 'y', source=source, color=color, legend_label=signal_name)
     figure_list.append(p)
+
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-5, end=20, value=data.f, step=0.005, title="f")
