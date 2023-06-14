@@ -96,13 +96,15 @@ class ParameterSelectNyquist:
         self.frequency_slider = frequency_slider
         self.data = data
         self.select = Select(title="Option:", value="",
-                             options=["", "DC", "1/4 Nyquist", "1/2 Nyquist", "Nyquist", "2 Nyquist"])
+                             options=["", "DC", "1/8 Nyquist", "1/4 Nyquist", "1/2 Nyquist", "Nyquist", "2 Nyquist"])
         self.select.on_change('value', self.update)
 
     def update_by_slider(self) -> None:
         f = self.data.f
         if f == 0:
             self.select.value = "DC"
+        elif f == self.data.fs / 16:
+            self.select.value = "1/8 Nyquist"
         elif f == self.data.fs / 8:
             self.select.value = "1/4 Nyquist"
         elif f == self.data.fs / 4:
@@ -120,6 +122,8 @@ class ParameterSelectNyquist:
         f = 0
         if new == "DC":
             f = 0
+        elif new == "1/8 Nyquist":
+            f = self.data.fs / 16
         elif new == "1/4 Nyquist":
             f = self.data.fs / 8
         elif new == "1/2 Nyquist":
