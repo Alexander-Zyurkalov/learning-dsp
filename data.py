@@ -37,10 +37,16 @@ def magnitude_phase(H):
     return magnitude, phase
 
 
-def delayed_y_for_e(n, T, f):
+def delayed_ejnt(n, T, f):
     w = 2 * np.pi * f
     calculate_y = calculate_y_for_ewint(n, T, f)
-    return 0.5 * calculate_y + 0.5 * calculate_y * np.exp(-1j * w)
+    return calculate_y * np.exp(-1j * w)
+
+
+def mixture_with_delayed_e_jnt(n, T, f):
+    w = 2 * np.pi * f
+    calculate_y = calculate_y_for_ewint(n, T, f)
+    return 0.5 * calculate_y + 0.5 * delayed_ejnt(n, T, f)
 
 
 class Data:
@@ -59,6 +65,7 @@ class Data:
             'e^{jnT}': {
                 'original_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 'delayed_signal': ColumnDataSource(data=dict(x=[], y=[])),
+                '0.5*original+0.5*delayed': ColumnDataSource(data=dict(x=[], y=[])),
             },
             'Sine': {
                 'sine_original': ColumnDataSource(data=dict(x=[], y=[])),
@@ -77,9 +84,10 @@ class Data:
         y = calculate_y_for_ewint(self.N, self.T, self.f)
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))
 
-        delayed_y = delayed_y_for_e(self.N, self.T, self.f)
+        mix_with_delayed = mixture_with_delayed_e_jnt(self.N, self.T, self.f)
         self.signal_groups['e^{jnT}']['original_signal'].data = dict(x=np.arange(self.N), y=np.real(y))
-        self.signal_groups['e^{jnT}']['delayed_signal'].data = dict(x=np.arange(self.N), y=np.real(delayed_y))
+        self.signal_groups['e^{jnT}']['delayed_signal'].data = dict(x=np.arange(self.N), y=np.real(delayed_ejnt(self.N, self.T, self.f)))
+        self.signal_groups['e^{jnT}']['0.5*original+0.5*delayed'].data = dict(x=np.arange(self.N), y=np.real(mix_with_delayed))
 
         sine_y = calculate_y_sine(self.N, self.T, self.f)
         delayed_sine_y = delayed_y_for_sine(self.N, self.T, self.f)
