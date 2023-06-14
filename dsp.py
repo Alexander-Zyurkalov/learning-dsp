@@ -1,5 +1,4 @@
 from bokeh.io import curdoc
-from bokeh.models import Select
 from bokeh.layouts import column, row
 from bokeh.plotting import figure
 
@@ -15,14 +14,14 @@ p1.line('x', 'y', line_width=2, source=data.magnitude_and_phase)
 p3 = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2), title='Complex y(n)')
 p3.line('x', 'y', line_width=2, source=data.complex_original_signal)
 
-# Assuming you have two data sources: source2 and source3
-p2 = figure(width=1500, height=400, title='e^inT', y_range=(-1.2, 1.2))
-p2.line('x', 'y', source=data.original_signal, color='blue', legend_label="Real part of the signal")
-p2.line('x', 'y', source=data.delayed_signal, color='red', legend_label="Delayed real part of the signal")
-
-p4 = figure(width=1500, height=400, title='sine(wnT)', y_range=(-1.2, 1.2))
-p4.line('x', 'y', source=data.sine_original, color='blue', legend_label="Original sine wave")
-p4.line('x', 'y', source=data.sine_original_delayed, color='red', legend_label="Delayed sine wave")
+# Create the figures in a loop
+figure_list = []
+for group_name, signals in data.signal_groups.items():
+    p = figure(width=1500, height=400, title=group_name, y_range=(-1.2, 1.2))
+    for signal_name, source in signals.items():
+        color = 'blue' if 'original' in signal_name else 'red'
+        p.line('x', 'y', source=source, color=color, legend_label=signal_name)
+    figure_list.append(p)
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-5, end=20, value=data.f, step=0.005, title="f")
@@ -39,7 +38,7 @@ frequency_slider.add_select(select_nyquist)
 layout1 = column(p1, p3)
 layout2 = column(
     samples_slider.slider, sampling_frequency_slider.slider, time_slider.slider,
-    p2, p4)
+    *figure_list)
 
 data.update_data()
 

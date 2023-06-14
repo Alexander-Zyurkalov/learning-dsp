@@ -53,37 +53,35 @@ class Data:
 
         # ColumnDataSource to hold the values
         self.magnitude_and_phase = ColumnDataSource(data=dict(x=[], y=[]))
-        self.original_signal = ColumnDataSource(data=dict(x=[], y=[]))
-        self.delayed_signal = ColumnDataSource(data=dict(x=[], y=[]))
         self.complex_original_signal = ColumnDataSource(data=dict(x=[], y=[]))
-        self.sine_original = ColumnDataSource(data=dict(x=[], y=[]))
-        self.sine_original_delayed = ColumnDataSource(data=dict(x=[], y=[]))
+
+        self.signal_groups = {
+            'e^{jnT}': {
+                'original_signal': ColumnDataSource(data=dict(x=[], y=[])),
+                'delayed_signal': ColumnDataSource(data=dict(x=[], y=[])),
+            },
+            'Sine': {
+                'sine_original': ColumnDataSource(data=dict(x=[], y=[])),
+                'sine_original_delayed': ColumnDataSource(data=dict(x=[], y=[])),
+            },
+        }
 
         self.update_data()
 
     def update_data(self):
-        # Function to calculate y values
-        y = calculate_y_for_ewint(self.N, self.T, self.f)
-
         # Function to calculate transfer function
         H = transfer_function(self.f)
         magnitude, phase = magnitude_phase(H)
         self.magnitude_and_phase.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
-        # Update the y(n) plot
-        self.original_signal.data = dict(x=np.arange(self.N), y=np.real(y))
-
-        # Update the complex y(n) plot
+        y = calculate_y_for_ewint(self.N, self.T, self.f)
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))
 
-        # Update the delayed y(n) plot
         delayed_y = delayed_y_for_e(self.N, self.T, self.f)
-        self.delayed_signal.data = dict(x=np.arange(self.N), y=np.real(delayed_y))
+        self.signal_groups['e^{jnT}']['original_signal'].data = dict(x=np.arange(self.N), y=np.real(y))
+        self.signal_groups['e^{jnT}']['delayed_signal'].data = dict(x=np.arange(self.N), y=np.real(delayed_y))
 
-        # Update the sine plot
         sine_y = calculate_y_sine(self.N, self.T, self.f)
-        self.sine_original.data = dict(x=np.arange(self.N), y=sine_y)
-
-        # Update the delayed sine plot
         delayed_sine_y = delayed_y_for_sine(self.N, self.T, self.f)
-        self.sine_original_delayed.data = dict(x=np.arange(self.N), y=delayed_sine_y)
+        self.signal_groups['Sine']['sine_original'].data = dict(x=np.arange(self.N), y=sine_y)
+        self.signal_groups['Sine']['sine_original_delayed'].data = dict(x=np.arange(self.N), y=delayed_sine_y)
