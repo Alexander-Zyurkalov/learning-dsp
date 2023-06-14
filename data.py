@@ -17,7 +17,16 @@ def calculate_y_sine(n, T, f):
     return np.sin(w * np.arange(n) * T)
 
 
-def delayed_y_for_sine(n, T, f):
+def calculated_y_one_sample_delayed(n, T, f):
+    w = 2 * np.pi * f
+    calculate_y = calculate_y_sine(n, T, f)
+    delayed_y = np.zeros(n)
+    for i in range(0, n):
+        delayed_y[i] = calculate_y[i - 1]
+    return delayed_y
+
+
+def mix_with_delayed_sine(n, T, f):
     w = 2 * np.pi * f
     calculate_y = calculate_y_sine(n, T, f)
     delayed_y = np.zeros(n)
@@ -69,7 +78,8 @@ class Data:
             },
             'Sine': {
                 'sine_original': ColumnDataSource(data=dict(x=[], y=[])),
-                'sine_original_delayed': ColumnDataSource(data=dict(x=[], y=[])),
+                'sine_delayed': ColumnDataSource(data=dict(x=[], y=[])),
+                'sine_mixed_with_delayed': ColumnDataSource(data=dict(x=[], y=[])),
             },
         }
 
@@ -86,10 +96,15 @@ class Data:
 
         mix_with_delayed = mixture_with_delayed_e_jnt(self.N, self.T, self.f)
         self.signal_groups['e^{jnT}']['original_signal'].data = dict(x=np.arange(self.N), y=np.real(y))
-        self.signal_groups['e^{jnT}']['delayed_signal'].data = dict(x=np.arange(self.N), y=np.real(delayed_ejnt(self.N, self.T, self.f)))
-        self.signal_groups['e^{jnT}']['0.5*original+0.5*delayed'].data = dict(x=np.arange(self.N), y=np.real(mix_with_delayed))
+        self.signal_groups['e^{jnT}']['delayed_signal'].data = dict(x=np.arange(self.N),
+                                                                    y=np.real(delayed_ejnt(self.N, self.T, self.f)))
+        self.signal_groups['e^{jnT}']['0.5*original+0.5*delayed'].data = dict(x=np.arange(self.N),
+                                                                              y=np.real(mix_with_delayed))
 
         sine_y = calculate_y_sine(self.N, self.T, self.f)
-        delayed_sine_y = delayed_y_for_sine(self.N, self.T, self.f)
+        sine_mixed_with_delayed = mix_with_delayed_sine(self.N, self.T, self.f)
         self.signal_groups['Sine']['sine_original'].data = dict(x=np.arange(self.N), y=sine_y)
-        self.signal_groups['Sine']['sine_original_delayed'].data = dict(x=np.arange(self.N), y=delayed_sine_y)
+        self.signal_groups['Sine']['sine_delayed'].data = dict(x=np.arange(self.N),
+                                                               y=calculated_y_one_sample_delayed(self.N, self.T, self.f))
+        self.signal_groups['Sine']['sine_mixed_with_delayed'].data = dict(x=np.arange(self.N),
+                                                                          y=sine_mixed_with_delayed)
