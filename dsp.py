@@ -43,18 +43,20 @@ for group_name, signals in data.signal_groups.items():
 
         # Add a line for each signal on each plot
         line1 = p1.line('x', 'y', source=source, color=color, legend_label=signal_name, muted_color=color,
-                        muted_alpha=0.2)
+                        muted_alpha=0.05)
         line2 = p2.line('x', 'y', source=source, color=color, legend_label=signal_name, muted_color=color,
-                        muted_alpha=0.2)
+                        muted_alpha=0.05)
 
         # Attach a callback to each checkbox to control the visibility of the corresponding lines
         callback1 = CustomJS(args=dict(line=line1,  group_checkbox=group_checkbox1), code="""
             line.visible = group_checkbox.active.includes(0);
+            line.glyph.line_alpha = group_checkbox.active.includes(0);
         """)
         group_checkbox1.js_on_change('active', callback1)
 
         callback2 = CustomJS(args=dict(line=line2,  group_checkbox=group_checkbox2), code="""
             line.visible = group_checkbox.active.includes(0);
+            line.glyph.line_alpha = group_checkbox.active.includes(0);
         """)
         group_checkbox2.js_on_change('active', callback2)
 
