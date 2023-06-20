@@ -1,5 +1,6 @@
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
+from bokeh.models import CheckboxGroup, CustomJS
 from bokeh.plotting import figure
 
 from data import Data
@@ -14,17 +15,34 @@ p1.line('x', 'y', line_width=2, source=data.magnitude_and_phase)
 p3 = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2), title='Complex y(n)')
 p3.line('x', 'y', line_width=2, source=data.complex_original_signal)
 
-colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
+colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
 
 # Create the figures in a loop
 figure_list = []
+
 for group_name, signals in data.signal_groups.items():
+    checkbox_list = []
     p = figure(width=1500, height=400, title=group_name, y_range=(-1.2, 1.2))
     for index, (signal_name, source) in enumerate(signals.items()):
         # Pick a color from the list, cycling back to the start if there are more signals than colors
         color = colors[index % len(colors)]
-        p.line('x', 'y', source=source, color=color, legend_label=signal_name)
-    figure_list.append(p)
+        line = p.line('x', 'y', source=source, color=color, legend_label=signal_name)
+
+        # Add a checkbox for each line
+        checkbox = CheckboxGroup(labels=[signal_name], active=[0], width=150)
+
+        # Attach a callback to each checkbox to control the visibility of the corresponding line
+        callback = CustomJS(args=dict(line=line, checkbox=checkbox), code="""
+            line.visible = checkbox.active.includes(0);
+        """)
+        checkbox.js_on_change('active', callback)
+
+        # Add the checkbox to the list
+        checkbox_list.append(checkbox)
+
+    # Arrange each plot and its checkboxes in a column and add to the figure_list
+    figure_list.append(column(p, *checkbox_list))
+
 
 
 # Create sliders
