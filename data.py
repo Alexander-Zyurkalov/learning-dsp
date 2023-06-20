@@ -75,6 +75,7 @@ class Data:
                 'real_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 'imag_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 'delayed_real_signal': ColumnDataSource(data=dict(x=[], y=[])),
+                'delayed_imag_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 '0.5*original+0.5*delayed': ColumnDataSource(data=dict(x=[], y=[])),
                 'real+imag':  ColumnDataSource(data=dict(x=[], y=[])),
             },
@@ -106,6 +107,8 @@ class Data:
         self.signal_groups['e^{jnT}']['imag_signal'].data = dict(x=np.arange(self.N), y=np.imag(y))
         self.signal_groups['e^{jnT}']['delayed_real_signal'].data = dict(x=np.arange(self.N),
                                                                     y=np.real(delayed_ejnt(self.N, self.T, self.f)))
+        self.signal_groups['e^{jnT}']['delayed_imag_signal'].data = dict(x=np.arange(self.N),
+                                                                    y=np.imag(delayed_ejnt(self.N, self.T, self.f)))
         self.signal_groups['e^{jnT}']['0.5*original+0.5*delayed'].data = dict(x=np.arange(self.N),
                                                                               y=np.real(mix_with_delayed))
         self.signal_groups['e^{jnT}']['real+imag'].data = dict(x=np.arange(self.N), y=np.real(y) + np.imag(y))
