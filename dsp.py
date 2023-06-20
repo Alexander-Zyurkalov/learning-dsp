@@ -28,6 +28,13 @@ for group_name, signals in data.signal_groups.items():
     checkbox_columns[1][group_name] = []
     checkbox_columns[2][group_name] = []
 
+    # Add a checkbox for each group
+    group_checkbox1 = CheckboxGroup(labels=[group_name], active=[0], width=150)
+    group_checkbox2 = CheckboxGroup(labels=[group_name], active=[0], width=150)
+
+    checkbox_columns[1][group_name].append(group_checkbox1)
+    checkbox_columns[2][group_name].append(group_checkbox2)
+
     # Iterate over the signals in each group
     for index, (signal_name, source) in enumerate(signals.items()):
         # Pick a color from the list
@@ -42,15 +49,17 @@ for group_name, signals in data.signal_groups.items():
         checkbox2 = CheckboxGroup(labels=[signal_name], active=[0], width=150)
 
         # Attach a callback to each checkbox to control the visibility of the corresponding lines
-        callback1 = CustomJS(args=dict(line=line1, checkbox=checkbox1), code="""
-            line.visible = checkbox.active.includes(0);
+        callback1 = CustomJS(args=dict(line=line1, checkbox=checkbox1, group_checkbox=group_checkbox1), code="""
+            line.visible = checkbox.active.includes(0) && group_checkbox.active.includes(0);
         """)
         checkbox1.js_on_change('active', callback1)
+        group_checkbox1.js_on_change('active', callback1)
 
-        callback2 = CustomJS(args=dict(line=line2, checkbox=checkbox2), code="""
-            line.visible = checkbox.active.includes(0);
+        callback2 = CustomJS(args=dict(line=line2, checkbox=checkbox2, group_checkbox=group_checkbox2), code="""
+            line.visible = checkbox.active.includes(0) && group_checkbox.active.includes(0);
         """)
         checkbox2.js_on_change('active', callback2)
+        group_checkbox2.js_on_change('active', callback2)
 
         # Add the checkbox to the list
         checkbox_columns[1][group_name].append(checkbox1)
