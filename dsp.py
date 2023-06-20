@@ -19,6 +19,7 @@ compl.line('x', 'y', line_width=2, source=data.complex_original_signal)
 p1 = figure(width=1500, height=400,  y_range=(-1.2, 1.2), title='Plot 1')
 p2 = figure(width=1500, height=400,  y_range=(-1.2, 1.2), title='Plot 2')
 
+
 colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
 
 checkbox_columns = {1: {}, 2: {}}  # separate checkbox dict for each figure
@@ -41,8 +42,10 @@ for group_name, signals in data.signal_groups.items():
         color = colors[index % len(colors)]
 
         # Add a line for each signal on each plot
-        line1 = p1.line('x', 'y', source=source, color=color, legend_label=signal_name)
-        line2 = p2.line('x', 'y', source=source, color=color, legend_label=signal_name)
+        line1 = p1.line('x', 'y', source=source, color=color, legend_label=signal_name, muted_color=color,
+                        muted_alpha=0.2)
+        line2 = p2.line('x', 'y', source=source, color=color, legend_label=signal_name, muted_color=color,
+                        muted_alpha=0.2)
 
         # Add a checkbox for each line in each figure
         checkbox1 = CheckboxGroup(labels=[signal_name], active=[0], width=150)
@@ -64,6 +67,9 @@ for group_name, signals in data.signal_groups.items():
         # Add the checkbox to the list
         checkbox_columns[1][group_name].append(checkbox1)
         checkbox_columns[2][group_name].append(checkbox2)
+
+p1.legend.click_policy="mute"
+p2.legend.click_policy="mute"
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-5, end=20, value=data.f, step=0.005, title="f")

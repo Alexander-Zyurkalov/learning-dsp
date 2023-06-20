@@ -76,6 +76,7 @@ class Data:
                 'imag_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 'delayed_real_signal': ColumnDataSource(data=dict(x=[], y=[])),
                 '0.5*original+0.5*delayed': ColumnDataSource(data=dict(x=[], y=[])),
+                'real+imag':  ColumnDataSource(data=dict(x=[], y=[])),
             },
             'Sine': {
                 'sine_original': ColumnDataSource(data=dict(x=[], y=[])),
@@ -107,6 +108,7 @@ class Data:
                                                                     y=np.real(delayed_ejnt(self.N, self.T, self.f)))
         self.signal_groups['e^{jnT}']['0.5*original+0.5*delayed'].data = dict(x=np.arange(self.N),
                                                                               y=np.real(mix_with_delayed))
+        self.signal_groups['e^{jnT}']['real+imag'].data = dict(x=np.arange(self.N), y=np.real(y) + np.imag(y))
 
         sine_y = calculate_y_sine(self.N, self.T, self.f)
         sine_mixed_with_delayed = mix_with_delayed_sine(self.N, self.T, self.f)
