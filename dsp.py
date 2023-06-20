@@ -21,10 +21,12 @@ p2 = figure(width=1500, height=400,  y_range=(-1.2, 1.2), title='Plot 2')
 
 colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
 
-checkbox_columns = [[], []]  # separate checkbox list for each figure
+checkbox_columns = {1: {}, 2: {}}  # separate checkbox dict for each figure
 
 # Iterate over the signal groups
 for group_name, signals in data.signal_groups.items():
+    checkbox_columns[1][group_name] = []
+    checkbox_columns[2][group_name] = []
 
     # Iterate over the signals in each group
     for index, (signal_name, source) in enumerate(signals.items()):
@@ -51,8 +53,8 @@ for group_name, signals in data.signal_groups.items():
         checkbox2.js_on_change('active', callback2)
 
         # Add the checkbox to the list
-        checkbox_columns[0].append(checkbox1)
-        checkbox_columns[1].append(checkbox2)
+        checkbox_columns[1][group_name].append(checkbox1)
+        checkbox_columns[2][group_name].append(checkbox2)
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-5, end=20, value=data.f, step=0.005, title="f")
@@ -67,7 +69,6 @@ frequency_slider.add_select(select_nyquist)
 
 # Arrange the plots, the slider and the checkboxes in a layout
 layout = column(
-    frequency_slider.slider,
     row(
         column(
             samples_slider.slider,
@@ -77,11 +78,14 @@ layout = column(
         ),
         row(hand, compl)
     ),
+    frequency_slider.slider,
     column(
-        row(column(*checkbox_columns[0])),
+        row(*[column(*v) for v in checkbox_columns[1].values()]),
         p1,
-        row(column(*checkbox_columns[1])),
-        p2
+    ),
+    column(
+        row(*[column(*v) for v in checkbox_columns[2].values()]),
+        p2,
     ),
 )
 
