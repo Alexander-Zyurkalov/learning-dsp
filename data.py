@@ -67,7 +67,7 @@ class Data:
         self.s = self.N * self.T
 
         # ColumnDataSource to hold the values
-        self.magnitude_and_phase = ColumnDataSource(data=dict(x=[], y=[]))
+        self.magnitude_and_phase = {"Mixture with delayed e^{jnT}": ColumnDataSource(data=dict(x=[], y=[]))}
         self.complex_original_signal = ColumnDataSource(data=dict(x=[], y=[]))
 
         self.signal_groups = {
@@ -97,7 +97,8 @@ class Data:
         # Function to calculate transfer function
         H = transfer_function(self.f, self.T)
         magnitude, phase = magnitude_phase(H)
-        self.magnitude_and_phase.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
+        self.magnitude_and_phase["Mixture with delayed e^{jnT}"].data = dict(x=[0, magnitude * np.cos(phase)],
+                                                                             y=[0, magnitude * -np.sin(phase)])
 
         y = calculate_y_for_ewint(self.N, self.T, self.f)
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))

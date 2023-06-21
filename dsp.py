@@ -8,19 +8,23 @@ from sliders import FrequencySlider, SamplesSlider, SamplingFrequencySlider, Tim
 
 data = Data()
 
-# Create a new plot with a single line (the 'hand')
+colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
+
 hand = figure(width=400, height=400, x_range=(-1, 1), y_range=(-1, 1), title='Magnitude and Phase')
-hand.line('x', 'y', line_width=2, source=data.magnitude_and_phase)
+# Create a new plot with a single line (the 'hand')
+a = enumerate(data.magnitude_and_phase)
+for index, (handDataName, magnitude_and_phase) in enumerate(data.magnitude_and_phase.items()):
+    color = colors[index % len(colors)]
+    hand.line('x', 'y', line_width=2, source=magnitude_and_phase, legend_label=handDataName,
+              muted_color=color, muted_alpha=0.05)
+hand.legend.click_policy = "mute"
 
 compl = figure(width=400, height=400, x_range=(-1.2, 1.2), y_range=(-1.2, 1.2), title='Complex y(n)')
 compl.line('x', 'y', line_width=2, source=data.complex_original_signal)
 
 # Create the new plots
-p1 = figure(width=1500, height=400,  y_range=(-1.2, 1.2), title='Plot 1')
-p2 = figure(width=1500, height=400,  y_range=(-1.2, 1.2), title='Plot 2')
-
-
-colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
+p1 = figure(width=1500, height=400, y_range=(-1.2, 1.2), title='Plot 1')
+p2 = figure(width=1500, height=400, y_range=(-1.2, 1.2), title='Plot 2')
 
 checkbox_columns = {1: {}, 2: {}}  # separate checkbox dict for each figure
 
@@ -48,21 +52,20 @@ for group_name, signals in data.signal_groups.items():
                         muted_alpha=0.05)
 
         # Attach a callback to each checkbox to control the visibility of the corresponding lines
-        callback1 = CustomJS(args=dict(line=line1,  group_checkbox=group_checkbox1), code="""
+        callback1 = CustomJS(args=dict(line=line1, group_checkbox=group_checkbox1), code="""
             line.visible = group_checkbox.active.includes(0);
             line.glyph.line_alpha = group_checkbox.active.includes(0);
         """)
         group_checkbox1.js_on_change('active', callback1)
 
-        callback2 = CustomJS(args=dict(line=line2,  group_checkbox=group_checkbox2), code="""
+        callback2 = CustomJS(args=dict(line=line2, group_checkbox=group_checkbox2), code="""
             line.visible = group_checkbox.active.includes(0);
             line.glyph.line_alpha = group_checkbox.active.includes(0);
         """)
         group_checkbox2.js_on_change('active', callback2)
 
-
-p1.legend.click_policy="mute"
-p2.legend.click_policy="mute"
+p1.legend.click_policy = "mute"
+p2.legend.click_policy = "mute"
 
 # Create sliders
 frequency_slider = FrequencySlider(data, start=-5, end=20, value=data.f, step=0.005, title="f")
