@@ -37,7 +37,14 @@ def mix_with_delayed_sine(n, T, f):
 
 def transfer_function(f, T):
     w = 2 * np.pi * f
-    return 0.5 + 0.5 * np.exp(-1j * w * T)
+    return 0.5 + 0.5 * np.exp(1j * w * T)
+
+
+def calculate_ewint(T, f):
+    if -0.01 < f < 0.01:
+        f = 0
+    w = 2 * np.pi * f
+    return np.exp(1j * w * T)
 
 
 def magnitude_phase(H):
@@ -67,7 +74,10 @@ class Data:
         self.s = self.N * self.T
 
         # ColumnDataSource to hold the values
-        self.magnitude_and_phase = {"Mixture with delayed e^{jnT}": ColumnDataSource(data=dict(x=[], y=[]))}
+        self.magnitude_and_phase = {
+            "Mixture with delayed e^{jnT}": ColumnDataSource(data=dict(x=[], y=[])),
+            "e^{jnT}": ColumnDataSource(data=dict(x=[], y=[]))
+        }
         self.complex_original_signal = ColumnDataSource(data=dict(x=[], y=[]))
 
         self.signal_groups = {
@@ -98,7 +108,12 @@ class Data:
         H = transfer_function(self.f, self.T)
         magnitude, phase = magnitude_phase(H)
         self.magnitude_and_phase["Mixture with delayed e^{jnT}"].data = dict(x=[0, magnitude * np.cos(phase)],
-                                                                             y=[0, magnitude * -np.sin(phase)])
+                                                                             y=[0, magnitude * np.sin(phase)])
+
+        magnitude, phase = magnitude_phase(calculate_ewint(self.T, self.f))
+        self.magnitude_and_phase["e^{jnT}"].data = dict(x=[0, magnitude * np.cos(phase)],
+                                                        y=[0, magnitude * np.sin(phase)])
+
 
         y = calculate_y_for_ewint(self.N, self.T, self.f)
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))

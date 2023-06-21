@@ -12,10 +12,9 @@ colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
 
 hand = figure(width=400, height=400, x_range=(-1, 1), y_range=(-1, 1), title='Magnitude and Phase')
 # Create a new plot with a single line (the 'hand')
-a = enumerate(data.magnitude_and_phase)
 for index, (handDataName, magnitude_and_phase) in enumerate(data.magnitude_and_phase.items()):
     color = colors[index % len(colors)]
-    hand.line('x', 'y', line_width=2, source=magnitude_and_phase, legend_label=handDataName,
+    hand.line('x', 'y', line_width=2, source=magnitude_and_phase, legend_label=handDataName, color=color,
               muted_color=color, muted_alpha=0.05)
 hand.legend.click_policy = "mute"
 
