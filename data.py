@@ -35,9 +35,9 @@ def mix_with_delayed_sine(n, T, f):
     return delayed_y
 
 
-def transfer_function(f):
+def transfer_function(f, T):
     w = 2 * np.pi * f
-    return 0.5 + 0.5 * np.exp(-1j * w)
+    return 0.5 + 0.5 * np.exp(-1j * w * T)
 
 
 def magnitude_phase(H):
@@ -49,13 +49,13 @@ def magnitude_phase(H):
 def delayed_ejnt(n, T, f):
     w = 2 * np.pi * f
     calculate_y = calculate_y_for_ewint(n, T, f)
-    return calculate_y * np.exp(-1j * w)
+    return calculate_y * np.exp(-1j * w * T)
 
 
 def mixture_with_delayed_e_jnt(n, T, f):
     w = 2 * np.pi * f
     calculate_y = calculate_y_for_ewint(n, T, f)
-    return 0.5 * calculate_y + 0.5 * delayed_ejnt(n, T, f)
+    return calculate_y * transfer_function(f, T)
 
 
 class Data:
@@ -95,7 +95,7 @@ class Data:
 
     def update_data(self):
         # Function to calculate transfer function
-        H = transfer_function(self.f)
+        H = transfer_function(self.f, self.T)
         magnitude, phase = magnitude_phase(H)
         self.magnitude_and_phase.data = dict(x=[0, magnitude * np.cos(phase)], y=[0, magnitude * np.sin(phase)])
 
