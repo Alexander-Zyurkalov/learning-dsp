@@ -91,6 +91,25 @@ class SamplingFrequencySlider(ParameterSlider):
             self.select.update_by_slider()
 
 
+class CoefficientA0Slider(ParameterSlider):
+    def __init__(self, data: Data, start: float, end: float, value: float, step: float, title: str):
+        super().__init__(data, start, end, value, step, title)
+
+
+    def update(self, attrname: str, old: float, new: float) -> None:
+        self.data.a0 = self.slider.value
+        self.data.update_data()
+
+
+class CoefficientB1Slider(ParameterSlider):
+    def __init__(self, data: Data, start: float, end: float, value: float, step: float, title: str):
+        super().__init__(data, start, end, value, step, title)
+
+    def update(self, attrname: str, old: float, new: float) -> None:
+        self.data.b1 = self.slider.value
+        self.data.update_data()
+
+
 class ParameterSelectNyquist:
     def __init__(self, data: Data, frequency_slider: FrequencySlider):
         self.frequency_slider = frequency_slider

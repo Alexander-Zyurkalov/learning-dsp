@@ -1,16 +1,28 @@
+import numpy as np
 from bokeh.io import curdoc
 from bokeh.layouts import column, row
 from bokeh.models import CheckboxGroup, CustomJS
 from bokeh.plotting import figure
 
 from data import Data
-from sliders import FrequencySlider, SamplesSlider, SamplingFrequencySlider, TimeSlider, ParameterSelectNyquist
+from sliders import FrequencySlider, SamplesSlider, SamplingFrequencySlider, TimeSlider, ParameterSelectNyquist, \
+    CoefficientA0Slider, CoefficientB1Slider
 
 data = Data()
 
 colors = ['red', 'green', 'blue', 'indigo', 'orange', 'yellow']
 
-hand = figure(width=400, height=400, x_range=(-1, 1), y_range=(-1, 1), title='Magnitude and Phase')
+hand = figure(width=400, height=400, x_range=(-2, 2), y_range=(-2, 2), title='Magnitude and Phase')
+# ==== unit circle ====
+# Generate an array of angles from 0 to 2*pi
+angles = np.linspace(0, 2*np.pi, 100)
+# Calculate the x and y coordinates of points on the unit circle
+x = np.cos(angles)
+y = np.sin(angles)
+# Draw the unit circle
+hand.line(x, y)
+# /==== unit circle ====
+
 # Create a new plot with a single line (the 'hand')
 for index, (handDataName, magnitude_and_phase) in enumerate(data.magnitude_and_phase.items()):
     color = colors[index % len(colors)]
@@ -76,6 +88,8 @@ sampling_frequency_slider = SamplingFrequencySlider(data, start=1, end=100, valu
 select_nyquist = ParameterSelectNyquist(data, frequency_slider)
 sampling_frequency_slider.add_select(select_nyquist)
 frequency_slider.add_select(select_nyquist)
+a0_coefficient_slider = CoefficientA0Slider(data, start=-2, end=2, value=data.a0, step=0.005, title="a0")
+b1_coefficient_slider = CoefficientB1Slider(data, start=-2, end=2, value=data.b1, step=0.005, title="b1")
 
 # Arrange the plots, the slider and the checkboxes in a layout
 layout = column(
@@ -84,6 +98,8 @@ layout = column(
             samples_slider.slider,
             time_slider.slider,
             sampling_frequency_slider.slider,
+            a0_coefficient_slider.slider,
+            b1_coefficient_slider.slider,
             select_nyquist.select,
         ),
         row(hand, compl)
