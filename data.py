@@ -26,18 +26,18 @@ def calculated_y_one_sample_delayed(n, T, f):
     return delayed_y
 
 
-def mix_with_delayed_sine(n, T, f):
+def mix_with_delayed_sine(n, T, f, a0, b1):
     w = 2 * np.pi * f
     calculate_y = calculate_y_sine(n, T, f)
     delayed_y = np.zeros(n)
     for i in range(0, n):
-        delayed_y[i] = 0.5 * calculate_y[i] + 0.5 * calculate_y[i - 1]
+        delayed_y[i] = a0 * calculate_y[i] + b1 * calculate_y[i - 1]
     return delayed_y
 
 
-def transfer_function(f, T):
+def transfer_function(f, T, a0, b1):
     w = 2 * np.pi * f
-    return 0.5 + 0.5 * np.exp(1j * w * T)
+    return a0 + b1 * np.exp(1j * w * T)
 
 
 def calculate_ewint(T, f):
@@ -59,10 +59,10 @@ def delayed_ejnt(n, T, f):
     return calculate_y * np.exp(-1j * w * T)
 
 
-def mixture_with_delayed_e_jnt(n, T, f):
+def mixture_with_delayed_e_jnt(n, T, f, a0, b1):
     w = 2 * np.pi * f
     calculate_y = calculate_y_for_ewint(n, T, f)
-    return calculate_y * transfer_function(f, T)
+    return calculate_y * transfer_function(f, T, a0, b1)
 
 
 class Data:
@@ -72,6 +72,8 @@ class Data:
         self.fs = 10
         self.T = 1.0 / self.fs
         self.s = self.N * self.T
+        self.a0 = 0.5
+        self.b1 = 0.5
 
         # ColumnDataSource to hold the values
         self.magnitude_and_phase = {
@@ -105,7 +107,7 @@ class Data:
 
     def update_data(self):
         # Function to calculate transfer function
-        H = transfer_function(self.f, self.T)
+        H = transfer_function(self.f, self.T, self.a0, self.b1)
         magnitude, phase = magnitude_phase(H)
         self.magnitude_and_phase["Mixture with delayed e^{jnT}"].data = dict(x=[0, magnitude * np.cos(phase)],
                                                                              y=[0, magnitude * np.sin(phase)])
@@ -118,7 +120,7 @@ class Data:
         y = calculate_y_for_ewint(self.N, self.T, self.f)
         self.complex_original_signal.data = dict(x=np.real(y), y=np.imag(y))
 
-        mix_with_delayed = mixture_with_delayed_e_jnt(self.N, self.T, self.f)
+        mix_with_delayed = mixture_with_delayed_e_jnt(self.N, self.T, self.f, self.a0, self.b1)
         self.signal_groups['e^{jnT}']['real_signal'].data = dict(x=np.arange(self.N), y=np.real(y))
         self.signal_groups['e^{jnT}']['imag_signal'].data = dict(x=np.arange(self.N), y=np.imag(y))
         self.signal_groups['e^{jnT}']['delayed_real_signal'].data = dict(x=np.arange(self.N),
@@ -130,7 +132,7 @@ class Data:
         self.signal_groups['e^{jnT}']['real+imag'].data = dict(x=np.arange(self.N), y=np.real(y) + np.imag(y))
 
         sine_y = calculate_y_sine(self.N, self.T, self.f)
-        sine_mixed_with_delayed = mix_with_delayed_sine(self.N, self.T, self.f)
+        sine_mixed_with_delayed = mix_with_delayed_sine(self.N, self.T, self.f, self.a0, self.b1)
         self.signal_groups['Sine']['sine_original'].data = dict(x=np.arange(self.N), y=sine_y)
         self.signal_groups['Sine']['sine_delayed'].data = dict(x=np.arange(self.N),
                                                                y=calculated_y_one_sample_delayed(self.N, self.T,
