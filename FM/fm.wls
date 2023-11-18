@@ -11,19 +11,11 @@ func[frequency_, t_] := Module[{},
 
 
 generateSound[frequency_, duration_, sampleRate_] := Module[{},
-    Play[
+    Table[
         func[frequency, t],
-        {t, 0, duration},
-        SampleRate -> sampleRate
+        {t, 0, duration, 1/sampleRate}
     ]
 ];
+data = generateSound[440, 1, 44100];
+ListPlay[data, SampleRate -> 44100]
 
-Manipulate[
-    Module[{},
-        generateSound[frequency, duration, 44100]
-    ],
-    {frequency, 0, 1000},
-    {duration, 0, 10}
-];
-
-generateSound[440, 1, 44100]
