@@ -16,6 +16,10 @@ generateSound[frequency_, duration_, sampleRate_] := Module[{},
         {t, 0, duration, 1/sampleRate}
     ]
 ];
-data = generateSound[440, 1, 44100];
-ListPlay[data, SampleRate -> 44100]
+Manipulate[
+    ListPlay[generateSound[frequency, duration, sampleRate], SampleRate -> sampleRate],
+    {{frequency,440}, 1, 1000},
+    {{duration, 1}, 1, 10},
+    {{sampleRate, 44100}, 1000, 48000}
+]
 
